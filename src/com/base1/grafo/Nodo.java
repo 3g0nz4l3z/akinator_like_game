@@ -1,6 +1,5 @@
 package com.base1.grafo;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -17,7 +16,14 @@ public class Nodo {
 		this.setVisitado(false);
 		this.setHoja(false);
 	}
-
+	
+	public Nodo() {
+		this.setCaracteristica("");
+		ejes = new ArrayList<Eje>();
+		this.setVisitado(false);
+		this.setHoja(false);
+	}
+	
 	public void setEje(Nodo destino, String valor, int peso, String pregunta) {
 		ejes.add(new Eje(destino, valor, peso, pregunta));
 	}
@@ -108,7 +114,7 @@ public class Nodo {
 	// }
 	// }
 
-	public void armarArbolD(ArrayList<CaracteristicaGrafo> csg) {
+	public void armarArbolD(ArrayList<CaracteristicaGrafo> csg){
 		if (csg.size() == 0) {
 			return;
 		}
@@ -118,10 +124,14 @@ public class Nodo {
 		for (Valor valor : cgAux.getValores()) {
 			ArrayList<CaracteristicaGrafo> csgAux = new ArrayList<>(csg);
 			Collections.shuffle(csgAux);
-			String cDestino = csgAux.get(0).getCaracteristica();
+			String cDestino = "";
+			if (csgAux.size() != 0) {				
+				cDestino = csgAux.get(0).getCaracteristica();
+			}
 			String sValor = valor.getEtiqueta();
 			this.setEje(cDestino ,sValor, valor.getPeso(),valor.getPregunta());
-			this.getNodo(sValor, cDestino).armarArbolD(csgAux);
+			Nodo nAux = this.getNodo(sValor, cDestino);
+			nAux.armarArbolD(csgAux);
 		}
 	}
 
