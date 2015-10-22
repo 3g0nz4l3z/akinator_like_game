@@ -33,5 +33,5 @@ CREATE TABLE caracteristica
 
 DROP USER 'genio_user'@'*';
 CREATE USER 'genio_user'@'*' IDENTIFIED BY 'genio_user';
-GRANT SELECT, INSERT, UPDATE ON db_genio.* TO 'genio_user'@'*';
+GRANT SELECT, INSERT, UPDATE ON db_genio . * TO 'genio_user'@'*';
 FLUSH PRIVILEGES;
