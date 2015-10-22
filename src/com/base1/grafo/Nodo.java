@@ -46,7 +46,7 @@ public class Nodo {
 	 * @param caracteristica
 	 * @return
 	 */
-	public Nodo getNodo(String caracteristica) {
+	public Nodo getHijo(String caracteristica) {
 		for (Eje eje : ejes) {
 			if (eje.getDestino().getCaracteristica().equals(caracteristica)) {
 				return eje.getDestino();
@@ -55,7 +55,7 @@ public class Nodo {
 		return null;
 	}
 	
-	public Nodo getNodo(String valor, String caracteristica)
+	public Nodo getHijo(String valor, String caracteristica)
 	{
 		for (Eje eje : ejes) {
 			if (eje.getDestino().getCaracteristica().equals(caracteristica) && eje.getValor().equals(valor)) {
@@ -130,7 +130,7 @@ public class Nodo {
 			}
 			String sValor = valor.getEtiqueta();
 			this.setEje(cDestino ,sValor, valor.getPeso(),valor.getPregunta());
-			Nodo nAux = this.getNodo(sValor, cDestino);
+			Nodo nAux = this.getHijo(sValor, cDestino);
 			nAux.armarArbolD(csgAux);
 		}
 	}
