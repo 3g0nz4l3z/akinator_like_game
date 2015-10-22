@@ -10,7 +10,7 @@ public class MainTest {
 	
 	public static void main(String[] args) {
 		ArrayList<CaracteristicaGrafo> csg = new Conslutor()
-				.consultaCaracteristicasG("materia");
+				.consultaCaracteristicasG("animal");
 		
 		Nodo arbolD = new Nodo();
 		arbolD.armarArbolD(csg);
