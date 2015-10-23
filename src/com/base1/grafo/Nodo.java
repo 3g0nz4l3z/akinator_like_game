@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import com.base1.misc.Tupla;
+import com.base1.sql.Consultor;
+
 public class Nodo {
 	private ArrayList<Eje> ejes;
 	private String caracteristica;
@@ -16,14 +19,14 @@ public class Nodo {
 		this.setVisitado(false);
 		this.setHoja(false);
 	}
-	
+
 	public Nodo() {
 		this.setCaracteristica("");
 		ejes = new ArrayList<Eje>();
 		this.setVisitado(false);
 		this.setHoja(false);
 	}
-	
+
 	public void setEje(Nodo destino, String valor, int peso, String pregunta) {
 		ejes.add(new Eje(destino, valor, peso, pregunta));
 	}
@@ -54,9 +57,8 @@ public class Nodo {
 		}
 		return null;
 	}
-	
-	public Nodo getHijo(String valor, String caracteristica)
-	{
+
+	public Nodo getHijo(String valor, String caracteristica) {
 		for (Eje eje : ejes) {
 			if (eje.getDestino().getCaracteristica().equals(caracteristica) && eje.getValor().equals(valor)) {
 				return eje.getDestino();
@@ -64,6 +66,7 @@ public class Nodo {
 		}
 		return null;
 	}
+
 	/**
 	 * 1 - Crea una array auxiliar de ejes 2 - A este array le voy agregar una
 	 * cantidad de ejes relativa al peso de cada eje 3 - De este array voy a
@@ -114,7 +117,7 @@ public class Nodo {
 	// }
 	// }
 
-	public void armarArbolD(ArrayList<CaracteristicaGrafo> csg){
+	public void armarArbolDViejo(ArrayList<CaracteristicaGrafo> csg) {
 		if (csg.size() == 0) {
 			return;
 		}
@@ -125,18 +128,53 @@ public class Nodo {
 			ArrayList<CaracteristicaGrafo> csgAux = new ArrayList<>(csg);
 			Collections.shuffle(csgAux);
 			String cDestino = "";
-			if (csgAux.size() != 0) {				
+			if (csgAux.size() != 0) {
 				cDestino = csgAux.get(0).getCaracteristica();
 			}
 			String sValor = valor.getEtiqueta();
-			this.setEje(cDestino ,sValor, valor.getPeso(),valor.getPregunta());
+			this.setEje(cDestino, sValor, valor.getPeso(), valor.getPregunta());
 			Nodo nAux = this.getHijo(sValor, cDestino);
-			nAux.armarArbolD(csgAux);
+			nAux.armarArbolDViejo(csgAux);
 		}
 	}
 
-	private CaracteristicaGrafo removeRandCG(
-			ArrayList<CaracteristicaGrafo> array) {
+	public void armarArbolD(ArrayList<String> cs, ArrayList<Tupla> tuplas) {
+		if (cs.size() == 0) {
+			return;
+		}
+
+		String cAux = this.removeRandC(cs);
+		this.setCaracteristica(cAux);
+		ArrayList<Valor> valores = new Consultor().consultarPorValores(cAux, tuplas);
+		for (Valor valor : valores) {
+//			ArrayList<String> csAux = new ArrayList<>(cs);
+//			Collections.shuffle(csAux);
+			String cDestino = "hoja";
+			if (cs.size() != 0) {
+				cDestino = getRandStr(cs);
+			}
+
+			String sValor = valor.getEtiqueta();
+			this.setEje(cDestino, sValor, valor.getPeso(), valor.getPregunta());
+			Nodo nAux = this.getHijo(sValor, cDestino);
+			tuplas.add(new Tupla(cAux, sValor));
+			nAux.armarArbolD(cs, tuplas);
+		}
+	}
+
+	private String getRandStr(ArrayList<String> array) {
+		// TODO Auto-generated method stub
+		int index = new Random().nextInt(array.size());
+		return array.remove(index);
+	}
+
+	private String removeRandC(ArrayList<String> array) {
+		// TODO Auto-generated method stub
+		int index = new Random().nextInt(array.size());
+		return array.remove(index);
+	}
+
+	private CaracteristicaGrafo removeRandCG(ArrayList<CaracteristicaGrafo> array) {
 
 		int index = new Random().nextInt(array.size());
 		return array.remove(index);

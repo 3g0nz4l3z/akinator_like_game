@@ -7,6 +7,7 @@ import com.base1.grafo.CaracteristicaGrafo;
 import com.base1.grafo.Valor;
 import com.base1.misc.Caracteristica;
 import com.base1.misc.Respuesta;
+import com.base1.misc.Tupla;
 import com.mysql.jdbc.ConnectionPropertiesTransform;
 
 /**
@@ -17,7 +18,7 @@ import com.mysql.jdbc.ConnectionPropertiesTransform;
  * @author exequiel
  *
  */
-public class Conslutor {
+public class Consultor {
 	private String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private String url = "jdbc:mysql://127.0.0.1:3306/db_genio";
 	private String user = "root";
@@ -29,7 +30,7 @@ public class Conslutor {
 	private String consultaPorCaracteristicas = "select distinct caracteristica from caracteristica where  id_caracteristica in (select id_respuesta from respuesta where id_topico = ?)";
 	private String consultaPorPropsDeCarac = "select distinct valor, pregunta, peso from caracteristica where caracteristica = ?";
 
-	public Conslutor() {
+	public Consultor() {
 		try {
 			Class.forName(JDBC_DRIVER).newInstance();
 		} catch (InstantiationException | IllegalAccessException
@@ -135,11 +136,11 @@ public class Conslutor {
 	public ArrayList<CaracteristicaGrafo> consultaCaracteristicasG(String topico) {
 		ArrayList<CaracteristicaGrafo> csg = new ArrayList<CaracteristicaGrafo>();
 
+		this.conectar();
 		ArrayList<String> cString = new ArrayList<String>();
 		PreparedStatement statment = null;
 		ResultSet resultSet = null;
 
-		this.conectar();
 
 		try {
 			statment = connection.prepareStatement(consultaPorCaracteristicas);
@@ -220,5 +221,86 @@ public class Conslutor {
 			}
 			e.printStackTrace();
 		}
+	}
+
+	public ArrayList<String> consultarPorCaracteristicas(String topico) {
+		// TODO Auto-generated method stub
+		this.conectar();
+		ArrayList<String> cString = new ArrayList<String>();
+		PreparedStatement statment = null;
+		ResultSet resultSet = null;
+
+		try {
+			statment = connection.prepareStatement(consultaPorCaracteristicas);
+			statment.setString(1, topico);
+			resultSet = statment.executeQuery();
+			while (resultSet.next()) {
+				String caracAux = resultSet.getString("caracteristica");
+				cString.add(caracAux);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				statment.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	
+		return cString;
+	}
+
+	public ArrayList<Valor> consultarPorValores(String cAux, ArrayList<Tupla> tuplas) {
+		this.conectar();
+		ArrayList<Valor> valores = new ArrayList<Valor>();
+		PreparedStatement statment = null;
+		ResultSet resultSet = null;
+		String sQuery = crearQuery(cAux, tuplas); // es una query muy especial
+	
+		try {
+			statment = connection.prepareStatement(sQuery);
+			resultSet = statment.executeQuery();
+			
+			while (resultSet.next()) {
+				String etiqueta = resultSet.getString("valor");
+				String pregunta = resultSet.getString("pregunta");
+				int peso = resultSet.getInt("peso");
+				valores.add(new Valor(etiqueta, pregunta, peso));
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			try {
+				statment.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return valores;
+	}
+
+	private String crearQuery(String caracteristica, ArrayList<Tupla> tuplas) {
+
+		String query = "select distinct valor, pregunta, peso from caracteristica where caracteristica = '"+caracteristica+"'";
+		
+		if (tuplas.size() > 0) {
+			ArrayList<String> clausules = new ArrayList<String>();
+			for (Tupla tupla : tuplas) {
+				clausules.add(" and id_caracteristica in (select id_caracteristica from caracteristica where caracteristica = '"+tupla.get(0)+"' and valor = '"+tupla.get(1)+"')");
+			}
+			for (String clausula : clausules) {
+				query +=clausula;
+			}
+		}
+		return query;
 	}
 }
