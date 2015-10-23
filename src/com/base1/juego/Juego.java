@@ -50,18 +50,30 @@ public class Juego {
 		
 			switch (key) {
 			case "si":
+				//incr peso
+				// vajo un hijo
+				//guardo (carac,valor)
+				tuplas.add(new Tupla(cAux,sValor)); // vajo un hijo
 				break;
 			case "no":
+				//decr peso de no ser 1
+				// hago otra pregunta de otro hijo de otro hermano
+				vRand = randValor(valores);
+				sValor = vRand.getEtiqueta();
+				tuplas.add(new Tupla(cAux,sValor)); 
 				break;
 			case "casi":
+				tuplas.add(new Tupla(cAux,sValor)); // vajo un hijo
 				break;
 			case "no se":
+				// hago otra pregunta de otro hijo de otro hermano
+				vRand = randValor(valores);
+				sValor = vRand.getEtiqueta();
+				tuplas.add(new Tupla(cAux,sValor)); 
 				break;
 			default:
 				break;
-			}
-			
-			tuplas.add(new Tupla(cAux,sValor)); // para el arbol			
+			}		
 		}
 		
 	}
