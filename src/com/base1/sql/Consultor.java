@@ -29,6 +29,7 @@ public class Consultor {
 	private String consultaActualizarCaracteristica = "update caracteristica set peso = ? where id_caracteristica = ? and caracteristica = ?";
 	private String consultaPorCaracteristicas = "select distinct caracteristica from caracteristica where  id_caracteristica in (select id_respuesta from respuesta where id_topico = ?)";
 	private String consultaPorPropsDeCarac = "select distinct valor, pregunta, peso from caracteristica where caracteristica = ?";
+	private String consultarPorTopicos = "select id_topico from topico";
 
 	public Consultor() {
 		try {
@@ -302,5 +303,33 @@ public class Consultor {
 			}
 		}
 		return query;
+	}
+
+	public ArrayList<String> consultarPorTopicos() {
+		this.conectar();
+		ArrayList<String> tipicos = new ArrayList<String>();
+		PreparedStatement statment = null;
+		ResultSet resultSet = null;
+		try {
+			statment = connection.prepareStatement(consultarPorTopicos );
+			resultSet = statment.executeQuery();
+			while (resultSet.next()) {
+				String caracAux = resultSet.getString("id_topico");
+				tipicos.add(caracAux);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				statment.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return tipicos;
 	}
 }
