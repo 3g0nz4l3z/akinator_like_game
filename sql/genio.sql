@@ -31,6 +31,7 @@ CREATE TABLE caracteristica
 	FOREIGN KEY(id_caracteristica) references respuesta(id_respuesta)
 ) CHARACTER SET 'utf8';
 
-CREATE USER 'genio_user'@'*' IDENTIFIED BY 'genio_user';
-GRANT SELECT, INSERT, UPDATE ON db_genio . * TO 'genio_user'@'*';
+DROP USER 'genio_user'@'*';
+CREATE USER 'genio_user'@'localhost' IDENTIFIED BY 'genio_user';
+GRANT SELECT, INSERT, UPDATE ON db_genio . * TO 'genio_user'@'localhost' IDENTIFIED BY 'genio_user';
 FLUSH PRIVILEGES;

@@ -1,10 +1,8 @@
 package com.base1.juego;
 
-import java.awt.RenderingHints.Key;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -57,7 +55,7 @@ public class Juego {
 			String sValor = vRand.getEtiqueta();
 
 			String pregunta = String.format(vRand.getPregunta(), vRand.getEtiqueta());
-			String key = input(pregunta);
+			String key = input(pregunta+" <si/no/casi/no se>");
 
 			switch (key) {
 			case "si":
@@ -97,7 +95,7 @@ public class Juego {
 		while (bSeguirPreguntando) {
 			if (sRespuestas.size() > 0) {
 				sRespuesta = randRespuesta(respuestas, sRespuestas);
-				String key = input("Es " + sRespuesta + " en lo que estas pensado si o no?");
+				String key = input("Es " + sRespuesta + " en lo que estas pensado <si/no>?");
 				switch (key) {
 				case "si":
 					System.out.println("Gane, gracias por jugar");
@@ -156,6 +154,7 @@ public class Juego {
 				}
 			}
 		}
+		System.out.println("Gracias por jugar");
 		consultor.actualizarDatos(respuestas);
 	}
 

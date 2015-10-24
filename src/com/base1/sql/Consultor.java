@@ -20,8 +20,8 @@ import com.base1.misc.Tupla;
 public class Consultor {
 	private String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private String url = "jdbc:mysql://127.0.0.1:3306/db_genio";
-	private String user = "root";
-	private String password = "root";
+	private String user = "genio_user";
+	private String password = "genio_user";
 	private Connection connection;
 	private String consultaRespuestaPorTopico = "select respuesta.id_respuesta, respuesta.ranking, caracteristica.caracteristica, caracteristica.valor, caracteristica.peso, caracteristica.pregunta from respuesta left join caracteristica on caracteristica.id_caracteristica = respuesta.id_respuesta where respuesta.id_topico = ? order by respuesta.id_respuesta";
 	private String consultaActualizarRespuesta = "update respuesta set ranking = ? where id_respuesta = ?";
