@@ -155,6 +155,7 @@ public class Juego {
 			}
 		}
 		System.out.println("Gracias por jugar");
+		input("Presione enter para salir");
 		consultor.actualizarDatos(respuestas);
 	}
 
@@ -232,30 +233,29 @@ public class Juego {
 		System.out.println(mensage);
 	}
 
-	// public String input(String message)
-	// {
-	// try {
-	// return consoleReader.readLine(message);
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return "";
-	// }
-
-	public String input(String mensage) {
-		String string;
-		System.out.println(mensage);
-		string = "";
+	public String input(String message) {
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-			string = bufferedReader.readLine();
+			return consoleReader.readLine(message);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return string;
+		return "";
 	}
+
+//	public String input(String mensage) {
+//		String string;
+//		System.out.println(mensage);
+//		string = "";
+//		try {
+//			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+//			string = bufferedReader.readLine();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return string;
+//	}
 
 	public void clear() {
 		try {
