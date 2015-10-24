@@ -8,7 +8,6 @@ import com.base1.grafo.Valor;
 import com.base1.misc.Caracteristica;
 import com.base1.misc.Respuesta;
 import com.base1.misc.Tupla;
-import com.mysql.jdbc.ConnectionPropertiesTransform;
 
 /**
  * Esta clase tiene todas las consultas necesarias que cliente genio necesita,
@@ -34,8 +33,7 @@ public class Consultor {
 	public Consultor() {
 		try {
 			Class.forName(JDBC_DRIVER).newInstance();
-		} catch (InstantiationException | IllegalAccessException
-				| ClassNotFoundException e) {
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -82,7 +80,7 @@ public class Consultor {
 		Respuesta respAux = null;
 		try {
 			statement = connection.prepareStatement(consultaRespuestaPorTopico);
-			statement.setString(1, "materia");
+			statement.setString(1, topico);
 			resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
@@ -98,21 +96,18 @@ public class Consultor {
 					// Si sigo obteniendo datos de una respuesta simplemente
 					// agrego caracteristica
 					if (respAux.getId_respuesta().equals(id_respuesta)) {
-						respAux.setCaracteristica(new Caracteristica(
-								caracteristica, valor, pregunta, peso));
+						respAux.setCaracteristica(new Caracteristica(caracteristica, valor, pregunta, peso));
 					} else {
 						// si obtengo una nueva respues guardo la anterior y
 						// creo esta nueva respuesta
 						respuestas.add(respAux);
 						respAux = new Respuesta(topico, id_respuesta, ranking);
-						respAux.setCaracteristica(new Caracteristica(
-								caracteristica, valor, pregunta, peso));
+						respAux.setCaracteristica(new Caracteristica(caracteristica, valor, pregunta, peso));
 					}
 				} else {
 					// No tengo una primera respuesta
 					respAux = new Respuesta(topico, id_respuesta, ranking);
-					respAux.setCaracteristica(new Caracteristica(
-							caracteristica, valor, pregunta, peso));
+					respAux.setCaracteristica(new Caracteristica(caracteristica, valor, pregunta, peso));
 				}
 			}
 			// Agrego la ultima respuesta
@@ -142,7 +137,6 @@ public class Consultor {
 		PreparedStatement statment = null;
 		ResultSet resultSet = null;
 
-
 		try {
 			statment = connection.prepareStatement(consultaPorCaracteristicas);
 			statment.setString(1, topico);
@@ -163,7 +157,7 @@ public class Consultor {
 					String etiqueta = resultSet.getString("valor");
 					String pregunta = resultSet.getString("pregunta");
 					int peso = resultSet.getInt("peso");
-					
+
 					cg.setValor(new Valor(etiqueta, pregunta, peso));
 				}
 				csg.add(cg);
@@ -192,21 +186,16 @@ public class Consultor {
 		PreparedStatement sttmntCaracteristica = null;
 
 		try {
-			sttmntRespuesta = connection
-					.prepareStatement(consultaActualizarRespuesta);
-			sttmntCaracteristica = connection
-					.prepareStatement(consultaActualizarCaracteristica);
+			sttmntRespuesta = connection.prepareStatement(consultaActualizarRespuesta);
+			sttmntCaracteristica = connection.prepareStatement(consultaActualizarCaracteristica);
 			for (Respuesta respuesta : respuestas) {
 				sttmntRespuesta.setInt(1, respuesta.getRanking());
 				sttmntRespuesta.setString(2, respuesta.getId_respuesta());
 				sttmntRespuesta.executeUpdate();
-				for (Caracteristica caracteristica : respuesta
-						.getCaracteristicas()) {
+				for (Caracteristica caracteristica : respuesta.getCaracteristicas()) {
 					sttmntCaracteristica.setInt(1, caracteristica.getPeso());
-					sttmntCaracteristica.setString(2,
-							respuesta.getId_respuesta());
-					sttmntCaracteristica.setString(3,
-							caracteristica.getVariable());
+					sttmntCaracteristica.setString(2, respuesta.getId_respuesta());
+					sttmntCaracteristica.setString(3, caracteristica.getVariable());
 					sttmntCaracteristica.executeUpdate();
 				}
 			}
@@ -238,12 +227,12 @@ public class Consultor {
 			while (resultSet.next()) {
 				String caracAux = resultSet.getString("caracteristica");
 				cString.add(caracAux);
-				
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally{
+		} finally {
 			try {
 				statment.close();
 				resultSet.close();
@@ -252,7 +241,7 @@ public class Consultor {
 				e.printStackTrace();
 			}
 		}
-	
+
 		return cString;
 	}
 
@@ -262,21 +251,21 @@ public class Consultor {
 		PreparedStatement statment = null;
 		ResultSet resultSet = null;
 		String sQuery = crearQuery(cAux, tuplas); // es una query muy especial
-	
+
 		try {
 			statment = connection.prepareStatement(sQuery);
 			resultSet = statment.executeQuery();
-			
+
 			while (resultSet.next()) {
 				String etiqueta = resultSet.getString("valor");
 				String pregunta = resultSet.getString("pregunta");
 				int peso = resultSet.getInt("peso");
 				valores.add(new Valor(etiqueta, pregunta, peso));
-				
+
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-		}finally{
+		} finally {
 			try {
 				statment.close();
 				resultSet.close();
@@ -285,21 +274,73 @@ public class Consultor {
 				e.printStackTrace();
 			}
 		}
-		
+
+		return valores;
+	}
+
+	public ArrayList<String> consultarPorRespuestas(ArrayList<Tupla> tuplas, String topico) {
+		this.conectar();
+		ArrayList<String> valores = new ArrayList<String>();
+		PreparedStatement statment = null;
+		ResultSet resultSet = null;
+		String sQuery = crearQuery(tuplas, topico); // es una query muy especial
+
+		try {
+			statment = connection.prepareStatement(sQuery);
+			resultSet = statment.executeQuery();
+
+			while (resultSet.next()) {
+				String etiqueta = resultSet.getString("id_respuesta");
+				valores.add(etiqueta);
+
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				statment.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		return valores;
 	}
 
 	private String crearQuery(String caracteristica, ArrayList<Tupla> tuplas) {
 
-		String query = "select distinct valor, pregunta, peso from caracteristica where caracteristica = '"+caracteristica+"'";
-		
+		String query = "select distinct valor, pregunta, peso from caracteristica where caracteristica = '"
+				+ caracteristica + "'";
+
 		if (tuplas.size() > 0) {
 			ArrayList<String> clausules = new ArrayList<String>();
 			for (Tupla tupla : tuplas) {
-				clausules.add(" and id_caracteristica in (select id_caracteristica from caracteristica where caracteristica = '"+tupla.get(0)+"' and valor = '"+tupla.get(1)+"')");
+				clausules
+						.add(" and id_caracteristica in (select id_caracteristica from caracteristica where caracteristica = '"
+								+ tupla.get(0) + "' and valor = '" + tupla.get(1) + "')");
 			}
 			for (String clausula : clausules) {
-				query +=clausula;
+				query += clausula;
+			}
+		}
+		return query;
+	}
+
+	private String crearQuery(ArrayList<Tupla> tuplas, String topico) {
+
+		String query = "select id_respuesta from respuesta where id_topico = '" + topico + "'";
+
+		if (tuplas.size() > 0) {
+			ArrayList<String> clausules = new ArrayList<String>();
+			for (Tupla tupla : tuplas) {
+				clausules
+						.add(" and id_respuesta in (select id_caracteristica from caracteristica where caracteristica = '"
+								+ tupla.get(0) + "' and valor = '" + tupla.get(1) + "')");
+			}
+			for (String clausula : clausules) {
+				query += clausula;
 			}
 		}
 		return query;
@@ -311,17 +352,17 @@ public class Consultor {
 		PreparedStatement statment = null;
 		ResultSet resultSet = null;
 		try {
-			statment = connection.prepareStatement(consultarPorTopicos );
+			statment = connection.prepareStatement(consultarPorTopicos);
 			resultSet = statment.executeQuery();
 			while (resultSet.next()) {
 				String caracAux = resultSet.getString("id_topico");
 				tipicos.add(caracAux);
-				
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally{
+		} finally {
 			try {
 				statment.close();
 				resultSet.close();
@@ -331,5 +372,40 @@ public class Consultor {
 			}
 		}
 		return tipicos;
+	}
+
+	public void agregarRespuesta(Respuesta respuestaNueva) {
+		String queryRespuesta = "INSERT INTO respuesta(id_respuesta, id_topico, ranking) VALUES (?, ?, ?)";
+		String queryCaracteristica = "INSERT INTO caracteristica(id_caracteristica, caracteristica, valor, pregunta, peso) VALUES(?, ?, ?, ?, ?)";
+		PreparedStatement statment = null;
+		try {
+			statment = connection.prepareStatement(queryRespuesta);
+			statment.setString(1, respuestaNueva.getId_respuesta());
+			statment.setString(2, respuestaNueva.getId_topico());
+			statment.setInt(3, respuestaNueva.getRanking());
+			statment.executeUpdate();
+
+			ArrayList<Caracteristica> caracteristicas = respuestaNueva.getCaracteristicas();
+			for (Caracteristica caracteristica : caracteristicas) {
+				statment = connection.prepareStatement(queryCaracteristica);
+				statment.setString(1, respuestaNueva.getId_respuesta());
+				statment.setString(2, caracteristica.getVariable());
+				statment.setString(3, caracteristica.getValor());
+				statment.setString(4, caracteristica.getPregunta());
+				statment.setInt(5, caracteristica.getPeso());
+				statment.executeUpdate();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				statment.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -1,6 +1,5 @@
 package com.base1.misc;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Respuesta {
