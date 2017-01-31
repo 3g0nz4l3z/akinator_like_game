@@ -1,2 +1,0 @@
-#!/bin/bash
-gnome-terminal -e "java -jar bin/base_1.jar"
