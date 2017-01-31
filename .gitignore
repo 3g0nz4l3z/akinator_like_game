@@ -1,3 +1,13 @@
 /bin
 *.zip
 *.pdf
+*.class
+
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+hs_err_pid*
